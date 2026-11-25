@@ -24,6 +24,7 @@ button:disabled{opacity:.6}.result{background:linear-gradient(145deg,#fff9e8,#ff
 .big .v{font-size:28px;font-weight:800;color:#174e50;font-variant-numeric:tabular-nums}
 .big .t{font:500 13px ui-monospace,monospace;color:var(--muted);width:100%;text-align:right}
 hr{border:0;border-top:1px solid #eadfbe;margin:0;width:100%}.steps{font-size:12px;color:var(--muted);font-family:ui-monospace,monospace;display:grid;gap:5px;overflow-wrap:anywhere}
+.credit{margin:4px 0 0;padding:15px 8px 4px;text-align:center;color:#6d8988;font-size:11px;letter-spacing:.045em;border-top:1px solid #d4e8e4}
 @media(max-width:420px){.row{grid-template-columns:1fr}.big .v{font-size:25px}}
 </style></head>
 <body><main>
@@ -43,11 +44,13 @@ hr{border:0;border-top:1px solid #eadfbe;margin:0;width:100%}.steps{font-size:12
 <div class="big"><span class="k">1 / ürün gramı</span><span class="v" id="bir">-</span></div><hr>
 <div class="big"><span class="k">Sonuç</span><span class="v" id="son">-</span><span class="t" id="sontl"></span></div><hr>
 <div class="big"><span class="k">Milyem karşılığı</span><span class="v" id="mil">-</span><span class="t" id="milb"></span></div><hr><div class="steps" id="steps"></div>
-</section><p class="meta" style="text-align:center">Fiyatlar internet bağlantısıyla güncellenir.</p></main>
+</section><p class="meta" style="text-align:center">Fiyatlar internet bağlantısıyla güncellenir.</p>
+<footer class="credit">Designed &amp; Developed by Mehmet Güdelek</footer>
+</main>
 <script>
 const MILYEM={"8K":.333,"9K":.375,"10K":.416,"14K":.585,"18K":.75,"21K":.875,"22K":.916},OUNCE=31.1035,URETIM=1/3,$=id=>document.getElementById(id),sel=$("ayar");
 Object.keys(MILYEM).forEach(k=>{let o=document.createElement("option");o.value=o.textContent=k;sel.appendChild(o)});sel.value="14K";
-try{let s=JSON.parse(localStorage.getItem("tas")||"{}");if(s.oz)$("oz").value=s.oz;if(s.kur)$("kur").value=s.kur}catch(e){}
+try{let s=JSON.parse(localStorage.getItem("tas")||"{}");if(s.oz) $("oz").value=s.oz;if(s.kur)$("kur").value=s.kur}catch(e){}
 const usd=n=>"$"+n.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2}),tl=n=>n.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL",n3=n=>n.toLocaleString("tr-TR",{maximumFractionDigits:4});
 function calc(){let u=parseFloat($("urun").value)||0,w=parseFloat($("w").value)||0,oz=parseFloat($("oz").value)||0,kur=parseFloat($("kur").value)||0,m=MILYEM[sel.value],g=oz/OUNCE,ind=w*m*URETIM*g,paz=ind*2;
 $("milyem").textContent="Has milyem: "+m;$("gram").textContent="Gram/Dolar: "+usd(g)+" · Gram/TL: "+tl(g*kur);
