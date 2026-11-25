@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#087f83"><meta name="description" content="Taş ağırlığı, ayar ve altın fiyatlarıyla milyem hesaplama.">
+<title>Taş Milyem Hesap</title><link rel="manifest" href="./manifest.json"><link rel="icon" href="./icon.svg" type="image/svg+xml">
+<style>
+:root{color-scheme:light;--bg:#edf8f6;--panel:#fff;--fg:#163638;--muted:#607d7d;--line:#d4e8e4;--teal:#087f83;--teal2:#0ba6a0;--gold:#b58a32;--goldsoft:#fff4d7}
+*{box-sizing:border-box}body{margin:0;padding:28px 16px max(28px,env(safe-area-inset-bottom));font:15px system-ui,-apple-system,sans-serif;background:radial-gradient(ellipse at 50% -10%,#c9eeea 0,transparent 55%),var(--bg);color:var(--fg)}
+main{max-width:520px;margin:auto;display:grid;gap:15px}
+header{text-align:center;padding:12px 4px 8px}
+.logo{width:64px;height:64px;margin:0 auto 12px;display:block;filter:drop-shadow(0 5px 8px #087f8330)}
+h1{font-size:28px;line-height:1.1;margin:0;color:#075f63;letter-spacing:-.7px}
+.sub{color:var(--muted);margin:7px 0 0;font-size:13px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;display:grid;gap:14px;box-shadow:0 8px 24px #164b4b0b}
+label{display:grid;gap:7px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+input,select{font:600 18px ui-monospace,monospace;color:var(--fg);background:#f5fbfa;border:1px solid var(--line);border-radius:11px;padding:12px;width:100%;min-width:0}
+input:focus,select:focus{outline:2px solid #45bdb4;outline-offset:1px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.meta{font-size:12px;color:var(--muted);font-family:ui-monospace,monospace;line-height:1.6}
+button{font:700 15px system-ui;color:white;background:linear-gradient(135deg,var(--teal),var(--teal2));border:0;border-radius:12px;padding:13px;cursor:pointer;box-shadow:0 5px 12px #087f832b}
+button:disabled{opacity:.6}.result{background:linear-gradient(145deg,#fff9e8,#fff);border-color:#ead8a9}
+.big{display:flex;justify-content:space-between;align-items:baseline;gap:4px 12px;flex-wrap:wrap}
+.big .k{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.big .v{font-size:28px;font-weight:800;color:#174e50;font-variant-numeric:tabular-nums}
+.big .t{font:500 13px ui-monospace,monospace;color:var(--muted);width:100%;text-align:right}
+hr{border:0;border-top:1px solid #eadfbe;margin:0;width:100%}.steps{font-size:12px;color:var(--muted);font-family:ui-monospace,monospace;display:grid;gap:5px;overflow-wrap:anywhere}
+@media(max-width:420px){.row{grid-template-columns:1fr}.big .v{font-size:25px}}
+</style></head>
+<body><main>
+<header><img class="logo" src="./icon.svg" alt=""><h1>Taş Milyem Hesap</h1><p class="sub">Taş ağırlığı, ayar ve güncel altın fiyatıyla hesaplama</p></header>
+<section class="panel"><div class="row">
+<label for="w">Taş ağırlığı (gram)<input id="w" type="number" inputmode="decimal" step="0.01" min="0" value="0.2"></label>
+<label for="ayar">Ayar<select id="ayar"></select></label></div>
+<label for="urun">Ürün gramı<input id="urun" type="number" inputmode="decimal" step="0.01" min="0" value="5"></label><div class="meta" id="milyem"></div></section>
+<section class="panel"><div class="row">
+<label for="oz">Altın ons ($)<input id="oz" type="number" inputmode="decimal" step="0.01" min="0" value="4160.80"></label>
+<label for="kur">Dolar kuru (TL)<input id="kur" type="number" inputmode="decimal" step="0.01" min="0" value="49.53"></label></div>
+<div class="meta" id="gram"></div><button id="yenile" type="button">↻ Fiyatları güncelle</button><div class="meta" id="durum"></div></section>
+<section class="panel result" aria-live="polite">
+<div class="big"><span class="k">Üretim payı</span><span class="v" id="ind">-</span><span class="t" id="indtl"></span></div><hr>
+<div class="big"><span class="k">Pazarlama payı</span><span class="v" id="paz">-</span><span class="t" id="paztl"></span></div><hr>
+<div class="big"><span class="k">Toplam (üretim + pazarlama)</span><span class="v" id="top">-</span><span class="t" id="toptl"></span></div><hr>
+<div class="big"><span class="k">1 / ürün gramı</span><span class="v" id="bir">-</span></div><hr>
+<div class="big"><span class="k">Sonuç</span><span class="v" id="son">-</span><span class="t" id="sontl"></span></div><hr>
+<div class="big"><span class="k">Milyem karşılığı</span><span class="v" id="mil">-</span><span class="t" id="milb"></span></div><hr><div class="steps" id="steps"></div>
+</section><p class="meta" style="text-align:center">Fiyatlar internet bağlantısıyla güncellenir.</p></main>
+<script>
+const MILYEM={"8K":.333,"9K":.375,"10K":.416,"14K":.585,"18K":.75,"21K":.875,"22K":.916},OUNCE=31.1035,URETIM=1/3,$=id=>document.getElementById(id),sel=$("ayar");
+Object.keys(MILYEM).forEach(k=>{let o=document.createElement("option");o.value=o.textContent=k;sel.appendChild(o)});sel.value="14K";
+try{let s=JSON.parse(localStorage.getItem("tas")||"{}");if(s.oz)$("oz").value=s.oz;if(s.kur)$("kur").value=s.kur}catch(e){}
+const usd=n=>"$"+n.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2}),tl=n=>n.toLocaleString("tr-TR",{minimumFractionDigits:2,maximumFractionDigits:2})+" TL",n3=n=>n.toLocaleString("tr-TR",{maximumFractionDigits:4});
+function calc(){let u=parseFloat($("urun").value)||0,w=parseFloat($("w").value)||0,oz=parseFloat($("oz").value)||0,kur=parseFloat($("kur").value)||0,m=MILYEM[sel.value],g=oz/OUNCE,ind=w*m*URETIM*g,paz=ind*2;
+$("milyem").textContent="Has milyem: "+m;$("gram").textContent="Gram/Dolar: "+usd(g)+" · Gram/TL: "+tl(g*kur);
+$("ind").textContent=usd(ind);$("indtl").textContent=tl(ind*kur);$("paz").textContent=usd(paz);$("paztl").textContent=tl(paz*kur);
+let top=ind+paz,bir=u>0?1/u:0,son=top*bir;$("top").textContent=usd(top);$("toptl").textContent=tl(top*kur);$("bir").textContent=u>0?n3(bir):"-";$("son").textContent=u>0?usd(son):"-";$("sontl").textContent=u>0?tl(son*kur):"Ürün gramını gir";
+let ml=g>0?son/g:0;$("mil").textContent=u>0?ml.toLocaleString("tr-TR",{minimumFractionDigits:4,maximumFractionDigits:4}):"-";$("milb").textContent=u>0?"binde "+(ml*1000).toLocaleString("tr-TR",{minimumFractionDigits:1,maximumFractionDigits:1}):"";
+$("steps").innerHTML="<div>Üretim payı = "+n3(w)+" g × "+m+" × 1/3 × "+usd(g)+"</div><div>Pazarlama payı = üretim payı × 2</div><div>Sonuç = (üretim payı + pazarlama payı) × 1/"+n3(u)+"</div><div>Milyem = sonuç ÷ gram/dolar ("+usd(g)+")</div>";
+try{localStorage.setItem("tas",JSON.stringify({oz:$("oz").value,kur:$("kur").value}))}catch(e){}}
+["w","urun","ayar","oz","kur"].forEach(i=>$(i).addEventListener("input",calc));
+async function getJSON(url){let t;let timeout=new Promise((_,rej)=>t=setTimeout(()=>rej(new Error("zaman aşımı")),8000));try{let r=await Promise.race([fetch(url),timeout]);if(!r.ok)throw Error("HTTP "+r.status);return await r.json()}finally{clearTimeout(t)}}
+async function first(sources){for(let [name,url,read] of sources){try{let v=read(await getJSON(url));if(v>0)return {v,name}}catch(e){}}return {v:0}}
+async function yenile(){let b=$("yenile"),d=$("durum");b.disabled=true;d.textContent="Güncelleniyor...";let [o,k]=await Promise.all([
+first([["gold-api","https://api.gold-api.com/price/XAU",j=>j.price],["xaus","https://xaus.com/api/v1/spot",j=>j.spot_usd_oz]]),
+first([["er-api","https://open.er-api.com/v6/latest/USD",j=>j.rates&&j.rates.TRY],["frankfurter","https://api.frankfurter.app/latest?from=USD&to=TRY",j=>j.rates&&j.rates.TRY]])]);
+let ok=[];if(o.v>0){$("oz").value=o.v.toFixed(2);ok.push("Ons "+o.v.toFixed(2)+" $");}if(k.v>0){$("kur").value=k.v.toFixed(2);ok.push("Kur "+k.v.toFixed(2)+" TL");}
+d.textContent=ok.length?ok.join(" · ")+" · "+new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}):"Fiyat alınamadı; değerleri elle girebilirsin.";b.disabled=false;calc()}
+$("yenile").addEventListener("click",yenile);calc();yenile();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script></body></html>
