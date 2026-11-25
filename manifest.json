@@ -1,0 +1,17 @@
+{
+  "name": "Taş Milyem Hesap",
+  "short_name": "Taş Milyem",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#edf8f6",
+  "theme_color": "#087f83",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
