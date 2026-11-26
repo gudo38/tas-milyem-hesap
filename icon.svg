@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#27c8bd"/><stop offset="1" stop-color="#075b68"/></linearGradient><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe49a"/><stop offset="1" stop-color="#b47d20"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="#eaf8f5"/><path d="M256 48 420 177 350 410 162 410 92 177Z" fill="url(#a)" stroke="#075b68" stroke-width="12" stroke-linejoin="round"/><path d="m256 48 0 362M92 177h328M92 177l164 233 164-233M256 48 174 177l82 233 82-233Z" fill="none" stroke="#a9f4e9" stroke-width="9" opacity=".9"/><path d="M256 48 420 177 256 177 92 177Z" fill="#71e1d1" opacity=".35"/><path d="M210 310h92" stroke="url(#b)" stroke-width="18" stroke-linecap="round"/><circle cx="256" cy="310" r="17" fill="url(#b)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs><clipPath id="round"><rect width="512" height="512" rx="112"/></clipPath></defs>
+  <g clip-path="url(#round)">
+    <image href="./Gemini_Generated_Image_ky0ja8ky0ja8ky0j%20(1).jpg" x="0" y="0" width="512" height="512" preserveAspectRatio="xMidYMid slice"/>
+  </g>
+</svg>
